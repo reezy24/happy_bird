@@ -46,13 +46,10 @@ pipes = [nil, starter_pipe, starter_pipe, starter_pipe, random_pipe]
 def update(game_height, pipes, pipe_gap, pipe_body, pipe_head, pipe_offset)
     # draw the screen
     system("clear")
-    range = pipe_offset..(pipe_head.length * pipes.length - 1 + pipe_offset)
+    range = pipe_offset..(pipe_head.length * (pipes.length - 1) + pipe_offset)
     game_height.times do |i| # each row
         this_row = ""
         pipes.each do |pipe|
-            # current height is equal to top or bottom pipe height - head
-            # current height is between top or bottom pipe - gap
-            # else - body
             if !pipe || (i > pipe.top_height && i < pipe.bottom_head) # no pipe exists - used for spacing out the start
                 this_row += pipe_gap
             elsif i == pipe.top_height || i == pipe.bottom_head # render pipe head
@@ -65,15 +62,22 @@ def update(game_height, pipes, pipe_gap, pipe_body, pipe_head, pipe_offset)
     end
 end
 
-def game_start(game_height, pipes, pipe_gap, pipe_body, pipe_head, game_speed)
+def game_start(game_height, pipes, pipe_gap, pipe_body, pipe_head, game_speed, min_pipe_height, max_pipe_height, pipe_gap_size)
+    pipes = pipes
     game_running = true
     x_offset = 0
     while game_running
         update(game_height, pipes, pipe_gap, pipe_body, pipe_head, x_offset)
         # delay loop by game_speed
         sleep(0.05)
-        x_offset == pipe_head.length ? x_offset = 0 : x_offset += 1
+        if x_offset == pipe_head.length
+            x_offset = 0
+            p game_height, pipe_head.length, min_pipe_height, max_pipe_height
+            pipes.push(RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)).shift
+        else
+            x_offset += 1
+        end
     end
 end
 
-game_start(game_height, pipes, pipe_gap, pipe_body, pipe_head, game_speed)
+game_start(game_height, pipes, pipe_gap, pipe_body, pipe_head, game_speed, min_pipe_height, max_pipe_height, pipe_gap_size)
