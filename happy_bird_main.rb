@@ -34,6 +34,13 @@ class Pipe
     end
 end
 
+class RandomPipe < Pipe
+    def initialize(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
+        top_height = rand(min_pipe_height..max_pipe_height)
+        super(top_height, game_height, pipe_gap_size)
+    end
+end
+
 def update
     # draw the screen
     system("clear")
