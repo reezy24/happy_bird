@@ -23,6 +23,17 @@ pipe_head = pipe_head.center(pipe_head.length + distance_between_pipes / 2, " ")
 pipe_body = pipe_body.center(pipe_body.length + distance_between_pipes / 2, " ")
 pipe_gap  = pipe_gap .center(pipe_gap .length + distance_between_pipes / 2, " ")
 
+# function to generate random pipe boundaries
+class Pipe
+    attr_accessor :top_height, :top_head, :bottom_height, :bottom_head 
+    def initialize(top_height, game_height, pipe_gap_size)
+        @top_height = top_height
+        @top_head = top_height
+        @bottom_height = game_height - top_height - pipe_gap_size
+        @bottom_head = game_height - @bottom_height
+    end
+end
+
 def update
     # draw the screen
     system("clear")
@@ -32,7 +43,7 @@ def update
             # current height is between top or bottom pipe - gap
             # else - body
             if i == top_pipe_head or i == bottom_pipe_head
-                
+            end
             # wait
         end
         sleep(game_speed)
