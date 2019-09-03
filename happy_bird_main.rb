@@ -46,15 +46,20 @@ def update
     # draw the screen
     system("clear")
     game_height.times do |i| # each row
-        pipe_heights.each do |height|
+        this_row = ""
+        pipes.each do |pipe|
             # current height is equal to top or bottom pipe height - head
             # current height is between top or bottom pipe - gap
             # else - body
-            if i == top_pipe_head or i == bottom_pipe_head
+            if !pipe || (i > pipe.top_height && i < pipe.bottom_head) # no pipe exists - used for spacing out the start
+                this_row += pipe_gap
+            elsif i == pipe.top_height || i == pipe.bottom_head # render pipe head
+                this_row += pipe_head
+            else # render pipe body
+                this_row += pipe_body
             end
-            # wait
         end
-        sleep(game_speed)
+        p this_row
     end
 end
 
@@ -62,7 +67,9 @@ def game_start
     game_running = true
     while game_running
         update
+        # delay loop by game_speed
+        sleep(game_speed)
     end
 end
 
-#game_running
+update
