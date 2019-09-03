@@ -12,9 +12,8 @@ distance_between_pipes = 30
 pipe_gap_size = 6
 min_pipe_height = 2
 max_pipe_height = game_height - pipe_gap_size - min_pipe_height
-game_speed = 0.05 # move the screen five times a second
+game_speed = 0.5 # move the screen five times a second
 game_running = true
-pipes_on_screen = 100
 x_shift = 0
 pipes = []
 
@@ -40,14 +39,14 @@ class RandomPipe < Pipe
     end
 end
 
-pipe_one = RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
-pipe_two = RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
-pipe_three = RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
-pipes = [nil, pipe_one, pipe_two, pipe_three]
+starter_pipe = Pipe.new(5, game_height, pipe_gap_size)
+random_pipe = RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
+pipes = [nil, starter_pipe, starter_pipe, starter_pipe, random_pipe]
 
-def update(game_height, pipes, pipe_gap, pipe_body, pipe_head)
+def update(game_height, pipes, pipe_gap, pipe_body, pipe_head, pipe_offset)
     # draw the screen
     system("clear")
+    range = pipe_offset..(pipe_head.length * pipes.length - 1 + pipe_offset)
     game_height.times do |i| # each row
         this_row = ""
         pipes.each do |pipe|
@@ -62,17 +61,19 @@ def update(game_height, pipes, pipe_gap, pipe_body, pipe_head)
                 this_row += pipe_body
             end
         end
-        p this_row
+        p this_row[range]
     end
 end
 
-def game_start
+def game_start(game_height, pipes, pipe_gap, pipe_body, pipe_head, game_speed)
     game_running = true
+    x_offset = 0
     while game_running
-        update
+        update(game_height, pipes, pipe_gap, pipe_body, pipe_head, x_offset)
         # delay loop by game_speed
-        sleep(game_speed)
+        sleep(0.05)
+        x_offset == pipe_head.length ? x_offset = 0 : x_offset += 1
     end
 end
 
-update(game_height, pipes, pipe_gap, pipe_body, pipe_head)
+game_start(game_height, pipes, pipe_gap, pipe_body, pipe_head, game_speed)
