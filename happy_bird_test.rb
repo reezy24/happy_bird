@@ -7,6 +7,9 @@ class HappyBirdTest < Test::Unit::TestCase
     end
     def test_pipe
         assert_equal(5, @pipe.top_height)
+        assert_equal(5, @pipe.top_head)
+        assert_equal(5, @pipe.bottom_height)
+        assert_equal(11, @pipe.bottom_head)
     end
 end
 
