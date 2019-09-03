@@ -25,10 +25,9 @@ pipe_gap  = pipe_gap .center(pipe_gap .length + distance_between_pipes / 2, " ")
 
 # function to generate random pipe boundaries
 class Pipe
-    attr_accessor :top_height, :top_head, :bottom_height, :bottom_head 
+    attr_accessor :top_height, :bottom_height, :bottom_head 
     def initialize(top_height, game_height, pipe_gap_size)
         @top_height = top_height
-        @top_head = top_height
         @bottom_height = game_height - top_height - pipe_gap_size
         @bottom_head = game_height - @bottom_height
     end
@@ -40,6 +39,8 @@ class RandomPipe < Pipe
         super(top_height, game_height, pipe_gap_size)
     end
 end
+
+pipes = [nil, Pipe.new(5, game_height, pipe_gap_size), Pipe.new(5, game_height, pipe_gap_size), Pipe.new(5, game_height, pipe_gap_size)]
 
 def update
     # draw the screen
