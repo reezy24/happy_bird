@@ -14,7 +14,7 @@ min_pipe_height = 2
 max_pipe_height = game_height - pipe_gap_size - min_pipe_height
 game_speed = 0.05 # move the screen five times a second
 game_running = true
-pipes_on_screen = 4
+pipes_on_screen = 100
 x_shift = 0
 pipes = []
 
@@ -40,9 +40,12 @@ class RandomPipe < Pipe
     end
 end
 
-pipes = [nil, Pipe.new(5, game_height, pipe_gap_size), Pipe.new(5, game_height, pipe_gap_size), Pipe.new(5, game_height, pipe_gap_size)]
+pipe_one = RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
+pipe_two = RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
+pipe_three = RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
+pipes = [nil, pipe_one, pipe_two, pipe_three]
 
-def update
+def update(game_height, pipes, pipe_gap, pipe_body, pipe_head)
     # draw the screen
     system("clear")
     game_height.times do |i| # each row
@@ -72,4 +75,4 @@ def game_start
     end
 end
 
-update
+update(game_height, pipes, pipe_gap, pipe_body, pipe_head)
