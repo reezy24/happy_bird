@@ -63,7 +63,7 @@ def game_start(settings)
     pipes = [nil, starter_pipe, starter_pipe, random_pipe]
 
     # initialise bird
-    bird = Bird.new(0, 5, 0)
+    bird = Bird.new(0, 5, 0, 5)
 
     # draw screen but don't start moving yet
     update(s, pipes, 0, bird)
@@ -73,7 +73,8 @@ def game_start(settings)
     game_running = true
 
     while game_running
-        bird.move(1, 0.05)
+        bird.jump if bird.y_pos <= 0
+        bird.move(-1, 0.05)
         update(s, pipes, x_offset, bird)
         # delay loop by game_speed
         sleep(0.05)
