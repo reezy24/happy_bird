@@ -1,33 +1,6 @@
 require_relative "happy_bird_pipes"
 require "tty-reader"
-# read a character without pressing enter and without printing to the screen
-# def read_char
-#     begin
-#       # save previous state of stty
-#       old_state = `stty -g`
-#       # disable echoing and enable raw (not having to press enter)
-#       system "stty raw -echo"
-#       c = STDIN.getc.chr
-#       # gather next two characters of special keys
-#       if(c=="\e")
-#         extra_thread = Thread.new{
-#           c = c + STDIN.getc.chr
-#           c = c + STDIN.getc.chr
-#         }
-#         # wait just long enough for special keys to get swallowed
-#         extra_thread.join(0.00001)
-#         # kill thread so not-so-long special keys don't wait on getc
-#         extra_thread.kill
-#       end
-#     rescue => ex
-#       puts "#{ex.class}: #{ex.message}"
-#       puts ex.backtrace
-#     ensure
-#       # restore previous state of stty
-#       system "stty #{old_state}"
-#     end
-#     return c
-#   end
+require "curses"
 
 SETTINGS = {
     
@@ -36,7 +9,7 @@ SETTINGS = {
     DIST_BETWEEN_PIPES_X: 25,
     DIST_BETWEEN_PIPES_Y: 6,
     MIN_PIPE_HEIGHT: 2,
-    SCROLL_SPEED: 0.5, # 1/SCROLL_SPEED = how many times the screen moves a second
+    SCROLL_SPEED: 0.05, # 1/SCROLL_SPEED = how many times the screen moves a second
     STARTER_PIPE_HEIGHT: 5,
 
     #graphics
@@ -51,7 +24,7 @@ SETTINGS = {
 def update(settings, pipes, pipe_offset)
     s = settings
     # draw the screen
-    system("clear")
+    Curses.clear
     range = pipe_offset..(s[:DIST_BETWEEN_PIPES_X] * (pipes.length - 1) + pipe_offset)
     s[:SCREEN_HEIGHT].times do |i| # each row
         this_row = ""
@@ -64,11 +37,16 @@ def update(settings, pipes, pipe_offset)
                 this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
         end
-        p this_row[range]
+        Curses.addstr(this_row[range]+"\n")
     end
+    Curses.refresh
 end
 
 def game_start(settings)
+
+    # curses testing
+    Curses.init_screen
+    Curses.noecho
 
     # game state vars
     s = settings
@@ -98,7 +76,7 @@ def game_start(settings)
         else
             x_offset += 1
         end
-        reader.read_char
+        #reader.read_char
     end
 end
 
