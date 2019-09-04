@@ -26,7 +26,7 @@ def update(settings, pipes, pipe_offset, bird)
     s = settings
     # draw the screen
     Curses.clear
-    # range = pipe_offset..(s[:DIST_BETWEEN_PIPES_X] * (pipes.length - 1) + pipe_offset)
+    range = pipe_offset..(s[:DIST_BETWEEN_PIPES_X] * (pipes.length - 1) + pipe_offset)
     # s[:SCREEN_HEIGHT].times do |i| # each row
     #     this_row = ""
     #     pipes.each do |pipe|
@@ -40,7 +40,15 @@ def update(settings, pipes, pipe_offset, bird)
     #     end
     #     Curses.addstr(this_row[range]+"\n")
     # end
-    Curses.addstr(bird.y_pos.to_s)
+    bird_y = bird.y_pos.round
+    bird_y.times do |i|
+        if i == bird_y
+            Curses.addstr(":)")
+        else
+            Curses.addstr("\n")
+        end
+    end
+    #Curses.addstr(bird.y_pos.to_s)
     # 
     Curses.refresh
 end
@@ -63,7 +71,7 @@ def game_start(settings)
     pipes = [nil, starter_pipe, starter_pipe, random_pipe]
 
     # initialise bird
-    bird = Bird.new(0, 5, 0, 5)
+    bird = Bird.new(0, 5, 0, -20)
 
     # draw screen but don't start moving yet
     update(s, pipes, 0, bird)
@@ -73,8 +81,8 @@ def game_start(settings)
     game_running = true
 
     while game_running
-        bird.jump if bird.y_pos <= 0
-        bird.move(-1, 0.05)
+        bird.jump if bird.y_pos >= 10
+        bird.move(50, 0.05)
         update(s, pipes, x_offset, bird)
         # delay loop by game_speed
         sleep(0.05)
