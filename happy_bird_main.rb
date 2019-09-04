@@ -28,6 +28,9 @@ class Bird
     @y_pos = y_pos
     @vel = vel
   end
+  def accelerate(a, t)
+    @vel += a * t
+  end
 end
 
 def update(settings, pipes, pipe_offset, bird)
