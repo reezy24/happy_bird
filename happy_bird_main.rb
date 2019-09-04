@@ -21,19 +21,7 @@ SETTINGS = {
 
 }
 
-class Bird
-  attr_accessor :x_pos, :y_pos, :vel
-  def initialize(x_pos, y_pos, vel)
-    @x_pos = x_pos
-    @y_pos = y_pos
-    @vel = vel
-  end
-  def accelerate(a, t)
-    @vel += a * t
-  end
-end
-
-def update(settings, pipes, pipe_offset, bird)
+def update(settings, pipes, pipe_offset)
     s = settings
     # draw the screen
     Curses.clear
