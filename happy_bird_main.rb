@@ -1,4 +1,33 @@
 require_relative "happy_bird_pipes"
+require "tty-reader"
+# read a character without pressing enter and without printing to the screen
+# def read_char
+#     begin
+#       # save previous state of stty
+#       old_state = `stty -g`
+#       # disable echoing and enable raw (not having to press enter)
+#       system "stty raw -echo"
+#       c = STDIN.getc.chr
+#       # gather next two characters of special keys
+#       if(c=="\e")
+#         extra_thread = Thread.new{
+#           c = c + STDIN.getc.chr
+#           c = c + STDIN.getc.chr
+#         }
+#         # wait just long enough for special keys to get swallowed
+#         extra_thread.join(0.00001)
+#         # kill thread so not-so-long special keys don't wait on getc
+#         extra_thread.kill
+#       end
+#     rescue => ex
+#       puts "#{ex.class}: #{ex.message}"
+#       puts ex.backtrace
+#     ensure
+#       # restore previous state of stty
+#       system "stty #{old_state}"
+#     end
+#     return c
+#   end
 
 SETTINGS = {
     
@@ -43,13 +72,21 @@ def game_start(settings)
 
     # game state vars
     s = settings
-    game_running = true
-    x_offset = 0
+    game_running = false
+    x_offset = 1
+    reader = TTY::Reader.new
 
     # start with empty, start pipe, start pipe, start pipe
     starter_pipe = Pipe.new(s[:STARTER_PIPE_HEIGHT], s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y])
     random_pipe = RandomPipe.new(s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y], s[:MIN_PIPE_HEIGHT])
-    pipes = [nil, starter_pipe, starter_pipe, starter_pipe, random_pipe]
+    pipes = [nil, starter_pipe, starter_pipe, random_pipe]
+
+    # draw screen but don't start moving yet
+    update(s, pipes, 0)
+    until reader.read_char == " "
+      game_running = false
+    end
+    game_running = true
 
     while game_running
         update(s, pipes, x_offset)
