@@ -8,4 +8,8 @@ class Bird
     def accelerate(a, t)
         @vel += a * t
     end
+    def move(a, t)
+        accelerate(a, t)
+        @y_pos += @vel * t
+    end
 end
