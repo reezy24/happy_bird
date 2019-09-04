@@ -98,6 +98,7 @@ def game_start(settings)
         else
             x_offset += 1
         end
+        reader.read_char
     end
 end
 
