@@ -1,83 +1,67 @@
-# graphics
-pipe_head = "[|||||]"
-pipe_body = " ||||| "
-pipe_gap =  "       "
+require_relative "happy_bird_pipes"
 
-happy_bird = ":)"
-sad_bird = ":("
+SETTINGS = {
+    
+    #config
+    SCREEN_HEIGHT: 20,
+    DIST_BETWEEN_PIPES_X: 25,
+    DIST_BETWEEN_PIPES_Y: 6,
+    MIN_PIPE_HEIGHT: 2,
+    SCROLL_SPEED: 0.5, # 1/SCROLL_SPEED = how many times the screen moves a second
+    STARTER_PIPE_HEIGHT: 5,
 
-# game vars
-game_height = 16
-distance_between_pipes = 30
-pipe_gap_size = 6
-min_pipe_height = 2
-max_pipe_height = game_height - pipe_gap_size - min_pipe_height
-game_speed = 0.5 # move the screen five times a second
-game_running = true
-x_shift = 0
-pipes = []
+    #graphics
+    PIPE_HEAD: "[|||||]",
+    PIPE_BODY: " ||||| ",
+    PIPE_GAP:  "       ",
+    HAPPY_BIRD: ":)",
+    SAD_BIRD: ":(",
 
-#modify pipe graphics based on distance_between_pipes
-pipe_head = pipe_head.center(pipe_head.length + distance_between_pipes / 2, " ")
-pipe_body = pipe_body.center(pipe_body.length + distance_between_pipes / 2, " ")
-pipe_gap  = pipe_gap .center(pipe_gap .length + distance_between_pipes / 2, " ")
+}
 
-# function to generate random pipe boundaries
-class Pipe
-    attr_accessor :top_height, :bottom_height, :bottom_head 
-    def initialize(top_height, game_height, pipe_gap_size)
-        @top_height = top_height
-        @bottom_height = game_height - top_height - pipe_gap_size
-        @bottom_head = game_height - @bottom_height
-    end
-end
-
-class RandomPipe < Pipe
-    def initialize(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
-        top_height = rand(min_pipe_height..max_pipe_height)
-        super(top_height, game_height, pipe_gap_size)
-    end
-end
-
-starter_pipe = Pipe.new(5, game_height, pipe_gap_size)
-random_pipe = RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)
-pipes = [nil, starter_pipe, starter_pipe, starter_pipe, random_pipe]
-
-def update(game_height, pipes, pipe_gap, pipe_body, pipe_head, pipe_offset)
+def update(settings, pipes, pipe_offset)
+    s = settings
     # draw the screen
     system("clear")
-    range = pipe_offset..(pipe_head.length * (pipes.length - 1) + pipe_offset)
-    game_height.times do |i| # each row
+    range = pipe_offset..(s[:DIST_BETWEEN_PIPES_X] * (pipes.length - 1) + pipe_offset)
+    s[:SCREEN_HEIGHT].times do |i| # each row
         this_row = ""
         pipes.each do |pipe|
             if !pipe || (i > pipe.top_height && i < pipe.bottom_head) # no pipe exists - used for spacing out the start
-                this_row += pipe_gap
+                this_row += s[:PIPE_GAP].center(s[:DIST_BETWEEN_PIPES_X], " ")
             elsif i == pipe.top_height || i == pipe.bottom_head # render pipe head
-                this_row += pipe_head
+                this_row += s[:PIPE_HEAD].center(s[:DIST_BETWEEN_PIPES_X], " ")
             else # render pipe body
-                this_row += pipe_body
+                this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
         end
         p this_row[range]
     end
 end
 
-def game_start(game_height, pipes, pipe_gap, pipe_body, pipe_head, game_speed, min_pipe_height, max_pipe_height, pipe_gap_size)
-    pipes = pipes
+def game_start(settings)
+
+    # game state vars
+    s = settings
     game_running = true
     x_offset = 0
+
+    # start with empty, start pipe, start pipe, start pipe
+    starter_pipe = Pipe.new(s[:STARTER_PIPE_HEIGHT], s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y])
+    random_pipe = RandomPipe.new(s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y], s[:MIN_PIPE_HEIGHT])
+    pipes = [nil, starter_pipe, starter_pipe, starter_pipe, random_pipe]
+
     while game_running
-        update(game_height, pipes, pipe_gap, pipe_body, pipe_head, x_offset)
+        update(s, pipes, x_offset)
         # delay loop by game_speed
         sleep(0.05)
-        if x_offset == pipe_head.length
+        if x_offset == s[:DIST_BETWEEN_PIPES_X]
             x_offset = 0
-            p game_height, pipe_head.length, min_pipe_height, max_pipe_height
-            pipes.push(RandomPipe.new(game_height, pipe_gap_size, min_pipe_height, max_pipe_height)).shift
+            pipes.push(RandomPipe.new(s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y], s[:MIN_PIPE_HEIGHT])).shift
         else
             x_offset += 1
         end
     end
 end
 
-game_start(game_height, pipes, pipe_gap, pipe_body, pipe_head, game_speed, min_pipe_height, max_pipe_height, pipe_gap_size)
+game_start(SETTINGS)
