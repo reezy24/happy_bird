@@ -63,11 +63,11 @@ def draw_score(screen, y, x, score, win)
 end
 
 def render(screen, window)
-    #window.clear
-    #screen.each do |row|
+    window.clear
+    screen.each do |row|
         #window.attrset(color_pair(1) | A_NORMAL)
-        #window.addstr(row)
-    #end
+        window.addstr(row)
+    end
     window.refresh
 end
 
@@ -121,7 +121,7 @@ def game_start(settings, win, leaderboard)
 
     # initialise screen
     draw_to_screen(screen, s[:BIRD_START_Y] + 2, s[:BIRD_START_X], "[SPACE] to jump", win)
-    render(screen, win)
+    win.refresh
 
     # start on spacebar press
     input_wait(" ")
@@ -155,9 +155,9 @@ def game_start(settings, win, leaderboard)
 
             # show user where they crashed
             game_running = false
-            draw_bird(bird, screen, s[:SAD_BIRD])
+            draw_bird(bird, screen, s[:SAD_BIRD], win)
             # make bird red
-            render(screen, win)
+            win.refresh
             sleep(s[:END_DELAY])
 
             # show final score
@@ -168,7 +168,7 @@ def game_start(settings, win, leaderboard)
 
         else
             draw_bird(bird, screen, s[:HAPPY_BIRD], win)
-            render(screen, win)
+            win.refresh
             sleep(s[:SCROLL_SPEED])
         end
     end
