@@ -46,11 +46,11 @@ def draw_pipes(settings, pipes, pipe_offset, screen)
     s[:SCREEN_HEIGHT].times do |i| # each row
         this_row = ""
         pipes.each do |pipe|
-            if !pipe || (i > pipe.top_height && i < pipe.bottom_head) # no pipe exists - used for spacing out the start
+            if !pipe || (i > pipe.top_height && i < pipe.bottom_head) # pipe gap
                 this_row += s[:PIPE_GAP].center(s[:DIST_BETWEEN_PIPES_X], " ")
-            elsif i == pipe.top_height || i == pipe.bottom_head # render pipe head
+            elsif i == pipe.top_height || i == pipe.bottom_head # pipe head
                 this_row += s[:PIPE_HEAD].center(s[:DIST_BETWEEN_PIPES_X], " ")
-            else # render pipe body
+            else # pipe body
                 this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
         end
@@ -58,12 +58,16 @@ def draw_pipes(settings, pipes, pipe_offset, screen)
     end
 end
 
-def render(screen)
-    Curses.clear
+def draw_bird(bird, screen, bird_graphic)
+    draw_to_screen(screen, bird.y_pos, bird.x_pos, bird_graphic)
+end
+
+def render(screen, window)
+    window.clear
     screen.each do |row|
-        Curses.addstr(row)
+        window.addstr(row)
     end
-    Curses.refresh
+    window.refresh
 end
 
 def game_start(settings)
@@ -89,10 +93,9 @@ def game_start(settings)
 
     # initialise screen
     draw_pipes(s, pipes, x_offset, screen)
-    render(screen)
-    
-    # initialise bird
-    # 
+    # p screen.length, screen[0].length # debug
+    win = Curses::Window.new(screen.length, screen[0].length, 0, 0)
+    render(screen, win)
 
     # start on spacebar press
     until reader.read_char == " "
@@ -103,9 +106,11 @@ def game_start(settings)
     # render every frame until end
     while game_running
 
+        screen = []
+
         # bird testing
-        #bird.jump if bird.y_pos >= 10
-        #bird.move(50, 0.05)
+        bird.jump if bird.y_pos >= 10
+        bird.move(50, 0.05)
         
         # adjust x_offset
         if x_offset == s[:DIST_BETWEEN_PIPES_X]
@@ -115,12 +120,10 @@ def game_start(settings)
             x_offset += 1
         end
 
+        # draw and render
         draw_pipes(s, pipes, x_offset, screen)
-
-        # draw bird
-        #
-
-        render(screen)
+        draw_bird(bird, screen, ":)")
+        render(screen, win)
 
         sleep(0.05)
 
