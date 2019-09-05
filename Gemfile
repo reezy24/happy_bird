@@ -11,3 +11,5 @@ gem "test-unit", "~> 3.3"
 gem "tty-reader", "~> 0.6.0"
 
 gem "curses", "~> 1.3"
+
+gem "colorize", "~> 0.8.1"

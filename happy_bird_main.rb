@@ -6,14 +6,17 @@ require_relative "end_screen"
 require_relative "leaderboard"
 require "tty-reader"
 require "curses"
+require "colorize"
 
 include Curses
 
 # curses
 init_screen # prevent flicker
-noecho # hide user input
+Curses.start_color
 win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
 win.nodelay = true # set listening for user input to nonblocking
+Curses.init_pair(1, Curses::COLOR_RED, Curses::COLOR_BLUE)
+Curses.attrset(color_pair(1) | Curses::A_NORMAL)
 
 leaderboard = Leaderboard.new
 
@@ -59,6 +62,7 @@ end
 def render(screen, window)
     window.clear
     screen.each do |row|
+        #window.attrset(color_pair(1) | A_NORMAL)
         window.addstr(row)
     end
     window.refresh
