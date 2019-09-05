@@ -29,6 +29,10 @@ def draw_to_screen(screen, y, x, str)
     screen[y][x..str.length-1] = str
 end
 
+def read_from_screen(screen, y, x_range)
+    return screen[y][x_range]
+end
+
 def draw_pipes(settings, pipes, pipe_offset, screen)
     s = settings
     range = pipe_offset..(s[:DIST_BETWEEN_PIPES_X] * (pipes.length - 1) + pipe_offset)
@@ -117,6 +121,7 @@ def game_start(settings)
         draw_bird(bird, screen, ":)")
         render(screen, win)
 
+        
         sleep(0.05)
 
     end
