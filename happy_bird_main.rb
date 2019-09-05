@@ -15,7 +15,6 @@ end
 
 def draw_to_screen(screen, y, x, str)
     screen[y] = "" if !screen[y] # create row
-    #screen[y][x..x+str.length-1] = str
     screen[y][range(x, str.length-1)] = str
 end
 
@@ -57,11 +56,11 @@ def render(screen, window)
     window.refresh
 end
 
-def select_option
+def select_option(win)
     reader = TTY::Reader.new
     case reader.read_char
     when " "
-        game_start(SETTINGS)
+        game_start(SETTINGS, win)
     when "l"
         leaderboard
     when "q"
@@ -76,16 +75,15 @@ def input_wait(input)
     input_wait unless reader.read_char == input
 end
 
-def game_start(settings)
+# curses
+init_screen # prevent flicker
+noecho # hide user input
+win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
+win.nodelay = true # set listening for user input to nonblocking
+
+def game_start(settings, win)
 
     s = settings
-
-    # curses
-    init_screen # prevent flicker
-    noecho # hide user input
-
-    # tty-reader
-    reader = TTY::Reader.new # get input without pressing enter
 
     # game state vars
     game_running = false
@@ -110,15 +108,10 @@ def game_start(settings)
     draw_score(screen, score_y_pos, score_x_pos, score)
 
     # initialise screen
-    win = Window.new(s[:SCREEN_HEIGHT], screen_width, 0, 0)
-    win.nodelay = true # set listening for user input to nonblocking
     draw_to_screen(screen, s[:BIRD_START_Y] + 2, s[:BIRD_START_X], "[SPACE] to jump")
     render(screen, win)
 
     # start on spacebar press
-    # until reader.read_char == " "
-    #   game_running = false
-    # end
     input_wait(" ")
     game_running = true
     bird.jump
@@ -146,17 +139,19 @@ def game_start(settings)
         # check for collision (when replaced range is not " ")
         hit = !read_from_screen(screen, bird.y_pos, range(bird.x_pos, s[:HAPPY_BIRD].length-1)).match(" ")
         if hit # end game
+
+            # show user where they crashed
             game_running = false
             draw_bird(bird, screen, s[:SAD_BIRD])
             # make bird red
             render(screen, win)
             sleep(s[:END_DELAY])
-            win.close
-            end_screen(score)
-            until reader.read_char == " "
-                game_running = false
-            end
-            game_start(SETTINGS)
+
+            # show final score
+            render(end_screen(score), win)
+            input_wait(" ")
+            game_start(SETTINGS, win)
+
         else
             draw_bird(bird, screen, s[:HAPPY_BIRD])
             render(screen, win)
@@ -165,8 +160,8 @@ def game_start(settings)
     end
 end
 
-main_menu
+render(main_menu, win)
 
-select_option
+select_option(win)
 
 

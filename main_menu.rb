@@ -1,7 +1,8 @@
 def main_menu
-    system("clear")
-    p "This is the main menu."
-    p "[SPACE] to start"
-    p "[L]eaderboard"
-    p "[Q]uit"
+    return [
+    "This is the main menu.\n",
+    "[SPACE] to start\n",
+    "[L]eaderboard\n",
+    "[Q]uit"
+    ]
 end

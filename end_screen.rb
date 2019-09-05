@@ -1,6 +1,8 @@
 def end_screen(score)
-    system("clear")
-    p "You crashed! Final score: #{score}"
-    p "[SPACE] try again"
-    p "[L]eaderboard"
+    return [
+    "You crashed! Final score: #{score}\n",
+    "[SPACE] try again\n",
+    "[L]eaderboard\n",
+    "[Q]uit"
+    ]
 end
