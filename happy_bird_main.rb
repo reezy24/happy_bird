@@ -118,10 +118,15 @@ def game_start(settings)
 
         # draw and render
         draw_pipes(s, pipes, x_offset, screen)
-        draw_bird(bird, screen, ":)")
+        if !read_from_screen(screen, bird.y_pos, bird.x_pos..":)".length-1).match(" ")
+            game_running = false
+            # make bird red and sad
+        else
+            draw_bird(bird, screen, ":)")
+        end
+
         render(screen, win)
 
-        
         sleep(0.05)
 
     end
