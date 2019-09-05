@@ -1,32 +1,14 @@
 require_relative "happy_bird_pipes"
+require_relative "bird"
+require_relative "settings"
 require "tty-reader"
 require "curses"
-require_relative "bird"
 
-#include Curses
-
-SETTINGS = {
-    
-    #config
-    SCREEN_HEIGHT: 20,
-    DIST_BETWEEN_PIPES_X: 25,
-    DIST_BETWEEN_PIPES_Y: 6,
-    MIN_PIPE_HEIGHT: 2,
-    SCROLL_SPEED: 0.05,
-    STARTER_PIPE_HEIGHT: 5,
-
-    #graphics
-    PIPE_HEAD: "[|||||]",
-    PIPE_BODY: " ||||| ",
-    PIPE_GAP:  "       ",
-    HAPPY_BIRD: ":)",
-    SAD_BIRD: ":(",
-
-}
+include Curses
 
 def draw_to_screen(screen, y, x, str)
     screen[y] = "" if !screen[y] # create row
-    screen[y][x..str.length-1] = str
+    screen[y][x..x+str.length-1] = str
 end
 
 def read_from_screen(screen, y, x_range)
@@ -65,10 +47,11 @@ end
 
 def game_start(settings)
 
-    Curses.init_screen # prevent flicker
-    Curses.noecho # hide user input
-    
     s = settings
+
+    # curses stuff
+    init_screen # prevent flicker
+    noecho # hide user input
 
     # game state vars
     game_running = false
@@ -82,13 +65,14 @@ def game_start(settings)
     pipes = [nil, starter_pipe, starter_pipe, random_pipe]
 
     # initialise bird
-    bird = Bird.new(0, 5, 0, -20)
+    bird = Bird.new(1, 5, 0, s[:BIRD_JUMP_POW])
+    #bird = Bird.new(s[:BIRD_START_X], s[:BIRD_START_Y], 0, s[:BIRD_JUMP_POW])
 
     # initialise screen
     draw_pipes(s, pipes, x_offset, screen)
-    # p screen.length, screen[0].length # debug
-    win = Curses::Window.new(screen.length, screen[0].length, 0, 0)
-    win.nodelay = true
+    screen_width = screen[0].length # length of any value in screen
+    win = Window.new(s[:SCREEN_HEIGHT], screen_width, 0, 0)
+    win.nodelay = true # set listening for user input to nonblocking
     render(screen, win)
 
     # start on spacebar press
