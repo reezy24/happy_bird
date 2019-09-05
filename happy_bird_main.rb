@@ -2,6 +2,7 @@ require_relative "happy_bird_pipes"
 require_relative "bird"
 require_relative "settings"
 require_relative "main_menu"
+require_relative "end_screen"
 require "tty-reader"
 require "curses"
 
@@ -126,8 +127,11 @@ def game_start(settings)
             # make bird red
             render(screen, win)
             sleep(s[:END_DELAY])
-            win.clear
-            sleep(5)
+            end_screen(score)
+            until reader.read_char == " "
+                game_running = false
+            end
+            game_start(SETTINGS)
         else
             draw_bird(bird, screen, s[:HAPPY_BIRD])
             render(screen, win)

@@ -9,7 +9,7 @@ SETTINGS = {
     SCROLL_SPEED: 0.05,
     STARTER_PIPE_HEIGHT: 5,
     GRAVITY: 60,
-    END_DELAY: 5,
+    END_DELAY: 3,
     SCORE_MARGIN: 2,
 
     #graphics
