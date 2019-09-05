@@ -65,7 +65,7 @@ def game_start(settings)
     pipes = [nil, starter_pipe, starter_pipe, random_pipe]
 
     # initialise bird
-    bird = Bird.new(1, 5, 0, s[:BIRD_JUMP_POW])
+    bird = Bird.new(2, 5, 0, s[:BIRD_JUMP_POW])
     #bird = Bird.new(s[:BIRD_START_X], s[:BIRD_START_Y], 0, s[:BIRD_JUMP_POW])
 
     # initialise screen
@@ -102,8 +102,8 @@ def game_start(settings)
 
         # draw and render
         draw_pipes(s, pipes, x_offset, screen)
-        if !read_from_screen(screen, bird.y_pos, bird.x_pos..":)".length-1).match(" ")
-            game_running = false
+        if !read_from_screen(screen, bird.y_pos, bird.x_pos..bird.x_pos+":)".length-1).match(" ")
+            #game_running = false
             # make bird red and sad
         else
             draw_bird(bird, screen, ":)")
