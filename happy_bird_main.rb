@@ -50,6 +50,10 @@ def draw_pipes(settings, pipes, pipe_offset, screen, win)
                 this_row += s[:PIPE_GAP].center(s[:DIST_BETWEEN_PIPES_X], " ")
             elsif i == pipe.top_height || i == pipe.bottom_head # pipe head
                 this_row += s[:PIPE_HEAD].center(s[:DIST_BETWEEN_PIPES_X], " ")
+            elsif i == s[:SCREEN_HEIGHT] - 2 # pipe ground
+                this_row += s[:PIPE_GROUND].center(s[:DIST_BETWEEN_PIPES_X], "_")
+            elsif i == s[:SCREEN_HEIGHT] - 1# pipe ground
+                this_row += s[:GROUND_FILL].center(s[:DIST_BETWEEN_PIPES_X], "/")
             else # pipe body
                 this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
@@ -69,7 +73,6 @@ end
 def render(screen, window)
     window.clear
     screen.each do |row|
-        #window.attrset(color_pair(1) | A_NORMAL)
         window.addstr(row)
     end
     window.refresh

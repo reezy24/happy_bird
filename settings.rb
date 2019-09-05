@@ -16,6 +16,8 @@ SETTINGS = {
     PIPE_HEAD: "[|||||]",
     PIPE_BODY: " ||||| ",
     PIPE_GAP:  "       ",
+    PIPE_GROUND: "_|||||_",
+    GROUND_FILL: "///////",
     HAPPY_BIRD: ":)",
     SAD_BIRD: ":(",
 

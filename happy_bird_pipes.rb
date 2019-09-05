@@ -9,6 +9,7 @@ end
 
 class RandomPipe < Pipe
     def initialize(game_height, pipe_gap_size, min_pipe_height)
+        min_pipe_height += 1
         max_pipe_height = game_height - pipe_gap_size - min_pipe_height
         top_height = rand(min_pipe_height..max_pipe_height)
         super(top_height, game_height, pipe_gap_size)
