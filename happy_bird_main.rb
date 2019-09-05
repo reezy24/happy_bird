@@ -24,20 +24,9 @@ SETTINGS = {
 
 }
 
-# bird code to be placed in function
-# bird_y = bird.y_pos.round
-# bird_y.times do |i|
-#     if i == bird_y
-#         Curses.addstr(":)")
-#     else
-#         Curses.addstr("\n")
-#     end
-# end
-# Curses.addstr(bird.y_pos.to_s) # debug
-
 def draw_to_screen(screen, y, x, str)
     screen[y] = "" if !screen[y] # create row
-    screen[y][x..str.length] = str
+    screen[y][x..str.length-1] = str
 end
 
 def draw_pipes(settings, pipes, pipe_offset, screen)
@@ -74,7 +63,7 @@ def game_start(settings)
 
     Curses.init_screen # prevent flicker
     Curses.noecho # hide user input
-
+    
     s = settings
 
     # game state vars
@@ -95,6 +84,7 @@ def game_start(settings)
     draw_pipes(s, pipes, x_offset, screen)
     # p screen.length, screen[0].length # debug
     win = Curses::Window.new(screen.length, screen[0].length, 0, 0)
+    win.nodelay = true
     render(screen, win)
 
     # start on spacebar press
@@ -109,7 +99,9 @@ def game_start(settings)
         screen = []
 
         # bird testing
-        bird.jump if bird.y_pos >= 10
+        if win.getch == " "
+            bird.jump #if bird.y_pos >= 10
+        end
         bird.move(50, 0.05)
         
         # adjust x_offset
