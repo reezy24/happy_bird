@@ -62,7 +62,8 @@ def game_start(settings)
     x_offset = 0
     reader = TTY::Reader.new
     screen = []
-    
+    score = 0
+
     # initialise pipes
     starter_pipe = Pipe.new(s[:STARTER_PIPE_HEIGHT], s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y])
     random_pipe = RandomPipe.new(s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y], s[:MIN_PIPE_HEIGHT])
@@ -77,7 +78,7 @@ def game_start(settings)
     screen_width = screen[0].length # length of any value in screen
     score_x_pos = screen_width - s[:SCORE_MARGIN] - 8 #rf
     score_y_pos = s[:SCREEN_HEIGHT] - s[:SCORE_MARGIN]
-    draw_score(screen, score_y_pos, score_x_pos, 0)
+    draw_score(screen, score_y_pos, score_x_pos, score)
 
     # initialise screen
     win = Window.new(s[:SCREEN_HEIGHT], screen_width, 0, 0)
@@ -97,16 +98,19 @@ def game_start(settings)
         bird.jump if win.getch == " " # jump on space
         bird.move(s[:GRAVITY], s[:SCROLL_SPEED])
         
-        # adjust x_offset (wanted to use modulo, couldn't figure)
-        if x_offset == s[:DIST_BETWEEN_PIPES_X]
+        # adjust x_offset
+        case x_offset
+        when s[:DIST_BETWEEN_PIPES_X] # first pipe off-screen
             x_offset = 0
             pipes.push(RandomPipe.new(s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y], s[:MIN_PIPE_HEIGHT])).shift
+        when (s[:DIST_BETWEEN_PIPES_X] - s[:PIPE_HEAD].length)/2 # player cleared pipe
+            score += 1
         end
         x_offset += 1
 
         draw_pipes(s, pipes, x_offset, screen)
-        draw_score(screen, score_y_pos, score_x_pos, 0)
-        
+        draw_score(screen, score_y_pos, score_x_pos, score)
+
         # check for collision (when replaced range is not " ")
         hit = !read_from_screen(screen, bird.y_pos, bird.x_pos..bird.x_pos+s[:HAPPY_BIRD].length-1).match(" ")
         if hit # end game
