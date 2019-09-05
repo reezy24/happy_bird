@@ -1,4 +1,5 @@
 class Leaderboard
+  attr_accessor :board
   def initialize
     @board = {
         John: 1,
@@ -7,6 +8,6 @@ class Leaderboard
     }
   end
   def to_screen
-    return @board.sort_by {|k, v| -v}.to_h
+    return @board.sort_by {|k, v| -v}
   end
 end
