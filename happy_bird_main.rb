@@ -73,7 +73,9 @@ def select_option(win, leaderboard)
     when " "
         game_start(SETTINGS, win, leaderboard)
     when "l"
-        render(leaderboard.to_screen, win)
+        render(["LEADERBOARD\n"] + leaderboard.to_screen + ["[SPACE] to start\n",
+        "[L]eaderboard\n",
+        "[Q]uit"], win)
         select_option(win, leaderboard)
     when "q"
         exit
