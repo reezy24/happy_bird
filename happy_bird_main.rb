@@ -51,6 +51,16 @@ def render(screen, window)
     window.refresh
 end
 
+def select_option
+    reader = TTY::Reader.new
+    case reader.read_char
+    when " "
+        game_start(SETTINGS)
+    else
+        select_option
+    end
+end
+
 def game_start(settings)
 
     s = settings
@@ -127,6 +137,7 @@ def game_start(settings)
             # make bird red
             render(screen, win)
             sleep(s[:END_DELAY])
+            win.close
             end_screen(score)
             until reader.read_char == " "
                 game_running = false
@@ -140,11 +151,8 @@ def game_start(settings)
     end
 end
 
-main_menu 
+main_menu
 
-reader = TTY::Reader.new
-until reader.read_char == " "
-    game_running = false
-end
+select_option
 
-game_start(SETTINGS)
+
