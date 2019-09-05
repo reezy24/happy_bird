@@ -3,6 +3,8 @@ require_relative "bird"
 require_relative "settings"
 require_relative "main_menu"
 require_relative "end_screen"
+require_relative "leaderboard"
+
 require "tty-reader"
 require "curses"
 
@@ -56,6 +58,10 @@ def select_option
     case reader.read_char
     when " "
         game_start(SETTINGS)
+    when "l"
+        leaderboard
+    when "q"
+        exit
     else
         select_option
     end
