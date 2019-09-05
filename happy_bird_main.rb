@@ -73,6 +73,7 @@ def game_start(settings)
     # initialise bird
     #bird = Bird.new(2, 5, 0, s[:BIRD_JUMP_POW])
     bird = Bird.new(s[:BIRD_START_X], s[:BIRD_START_Y], 0, s[:BIRD_JUMP_POW])
+    draw_bird(bird, screen, ":)")
 
     # initialise score
     screen_width = screen[0].length # length of any value in screen
@@ -83,13 +84,15 @@ def game_start(settings)
     # initialise screen
     win = Window.new(s[:SCREEN_HEIGHT], screen_width, 0, 0)
     win.nodelay = true # set listening for user input to nonblocking
+    draw_to_screen(screen, s[:BIRD_START_Y] + 2, s[:BIRD_START_X], "[SPACE] to jump")
     render(screen, win)
-
+    
     # start on spacebar press
     until reader.read_char == " "
       game_running = false
     end
     game_running = true
+    bird.jump
 
     while game_running
 
@@ -107,6 +110,7 @@ def game_start(settings)
             score += 1
         end
         x_offset += 1
+        
 
         draw_pipes(s, pipes, x_offset, screen)
         draw_score(screen, score_y_pos, score_x_pos, score)
@@ -119,6 +123,8 @@ def game_start(settings)
             # make bird red
             render(screen, win)
             sleep(s[:END_DELAY])
+            win.clear
+            sleep(5)
         else
             draw_bird(bird, screen, s[:HAPPY_BIRD])
             render(screen, win)
