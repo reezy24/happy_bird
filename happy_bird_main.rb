@@ -10,9 +10,14 @@ require "curses"
 
 include Curses
 
+def range(lower, upper)
+    return lower..lower + upper
+end
+
 def draw_to_screen(screen, y, x, str)
     screen[y] = "" if !screen[y] # create row
-    screen[y][x..x+str.length-1] = str
+    #screen[y][x..x+str.length-1] = str
+    screen[y][range(x, str.length-1)] = str
 end
 
 def read_from_screen(screen, y, x_range)
@@ -91,13 +96,12 @@ def game_start(settings)
     draw_pipes(s, pipes, x_offset, screen)
 
     # initialise bird
-    #bird = Bird.new(2, 5, 0, s[:BIRD_JUMP_POW])
     bird = Bird.new(s[:BIRD_START_X], s[:BIRD_START_Y], 0, s[:BIRD_JUMP_POW])
-    draw_bird(bird, screen, ":)")
+    draw_bird(bird, screen, s[:HAPPY_BIRD])
 
     # initialise score
-    screen_width = screen[0].length # length of any value in screen
-    score_x_pos = screen_width - s[:SCORE_MARGIN] - 8 #rf
+    screen_width = screen[0].length # length of any value in screen array
+    score_x_pos = screen_width - s[:SCORE_MARGIN] - s[:PIPE_HEAD].length - 1
     score_y_pos = s[:SCREEN_HEIGHT] - s[:SCORE_MARGIN]
     draw_score(screen, score_y_pos, score_x_pos, score)
 
