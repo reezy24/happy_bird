@@ -88,29 +88,28 @@ def game_start(settings)
         bird.jump if win.getch == " " # jump on space
         bird.move(s[:GRAVITY], s[:SCROLL_SPEED])
         
-        # adjust x_offset
+        # adjust x_offset (wanted to use modulo, couldn't figure)
         if x_offset == s[:DIST_BETWEEN_PIPES_X]
             x_offset = 0
             pipes.push(RandomPipe.new(s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y], s[:MIN_PIPE_HEIGHT])).shift
         end
         x_offset += 1
 
-        # draw and render
         draw_pipes(s, pipes, x_offset, screen)
-        if !read_from_screen(screen, bird.y_pos, bird.x_pos..bird.x_pos+":)".length-1).match(" ")
-            draw_bird(bird, screen, ":(")
-            render(screen, win)
+
+        # check for collision (when replaced range is not " ")
+        hit = !read_from_screen(screen, bird.y_pos, bird.x_pos..bird.x_pos+s[:HAPPY_BIRD].length-1).match(" ")
+        if hit # end game
             game_running = false
-            sleep(5)
-            # make bird red and sad
+            draw_bird(bird, screen, s[:SAD_BIRD])
+            # make bird red
+            render(screen, win)
+            sleep(s[:END_DELAY])
         else
-            draw_bird(bird, screen, ":)")
+            draw_bird(bird, screen, s[:HAPPY_BIRD])
+            render(screen, win)
+            sleep(s[:SCROLL_SPEED])
         end
-
-        render(screen, win)
-
-        sleep(0.05)
-
     end
 end
 

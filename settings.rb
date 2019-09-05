@@ -8,6 +8,7 @@ SETTINGS = {
     SCROLL_SPEED: 0.05,
     STARTER_PIPE_HEIGHT: 5,
     GRAVITY: 50,
+    END_DELAY: 5,
 
     #graphics
     PIPE_HEAD: "[|||||]",
