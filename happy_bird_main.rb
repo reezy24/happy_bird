@@ -11,9 +11,14 @@ include Curses
 
 # curses
 init_screen # prevent flicker
+noecho
+curs_set(0)
 start_color
 init_pair(1, COLOR_GREEN, COLOR_BLACK)
-attrset(color_pair(1) | A_NORMAL)
+init_pair(2, COLOR_YELLOW, COLOR_BLACK)
+init_pair(3, COLOR_WHITE, COLOR_BLACK)
+init_pair(4, COLOR_RED, COLOR_BLACK)
+
 win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
 win.nodelay = true # set listening for user input to nonblocking
 
@@ -23,16 +28,19 @@ def range(lower, upper)
     return lower..lower + upper
 end
 
-def draw_to_screen(screen, y, x, str)
+def draw_to_screen(screen, y, x, str, win, pair = 3)
     screen[y] = "" if !screen[y] # create row
     screen[y][range(x, str.length-1)] = str
+    win.attrset(color_pair(pair) | A_NORMAL)
+    win.setpos(y,x)
+    win.addstr(str)
 end
 
 def read_from_screen(screen, y, x_range)
     return screen[y][x_range]
 end
 
-def draw_pipes(settings, pipes, pipe_offset, screen)
+def draw_pipes(settings, pipes, pipe_offset, screen, win)
     s = settings
     viewport = range(pipe_offset, s[:DIST_BETWEEN_PIPES_X] * (pipes.length - 1))
     s[:SCREEN_HEIGHT].times do |i| # each row
@@ -46,16 +54,16 @@ def draw_pipes(settings, pipes, pipe_offset, screen)
                 this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
         end
-        draw_to_screen(screen, i, 0, this_row[viewport]+"\n")
+        draw_to_screen(screen, i, 0, this_row[viewport]+"\n", win, 1)
     end
 end
 
-def draw_bird(bird, screen, bird_graphic)
-    draw_to_screen(screen, bird.y_pos, bird.x_pos, bird_graphic)
+def draw_bird(bird, screen, bird_graphic, win)
+    draw_to_screen(screen, bird.y_pos, bird.x_pos, bird_graphic, win, 2)
 end
 
-def draw_score(screen, y, x, score)
-    draw_to_screen(screen, y, x, "SCORE: #{score}")
+def draw_score(screen, y, x, score, win)
+    draw_to_screen(screen, y, x, "SCORE: #{score}", win)
 end
 
 def render(screen, window)
@@ -103,21 +111,21 @@ def game_start(settings, win, leaderboard)
     starter_pipe = Pipe.new(s[:STARTER_PIPE_HEIGHT], s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y])
     random_pipe = RandomPipe.new(s[:SCREEN_HEIGHT], s[:DIST_BETWEEN_PIPES_Y], s[:MIN_PIPE_HEIGHT])
     pipes = [nil, starter_pipe, starter_pipe, random_pipe]
-    draw_pipes(s, pipes, x_offset, screen)
+    draw_pipes(s, pipes, x_offset, screen, win)
 
     # initialise bird
     bird = Bird.new(s[:BIRD_START_X], s[:BIRD_START_Y], 0, s[:BIRD_JUMP_POW])
-    draw_bird(bird, screen, s[:HAPPY_BIRD])
+    draw_bird(bird, screen, s[:HAPPY_BIRD], win)
 
     # initialise score
     screen_width = screen[0].length # length of any value in screen array
     score_x_pos = screen_width - s[:SCORE_MARGIN] - s[:PIPE_HEAD].length - 1
     score_y_pos = s[:SCREEN_HEIGHT] - s[:SCORE_MARGIN]
-    draw_score(screen, score_y_pos, score_x_pos, score)
+    draw_score(screen, score_y_pos, score_x_pos, score, win)
 
     # initialise screen
-    draw_to_screen(screen, s[:BIRD_START_Y] + 2, s[:BIRD_START_X], "[SPACE] to jump")
-    render(screen, win)
+    draw_to_screen(screen, s[:BIRD_START_Y] + 2, s[:BIRD_START_X], "[SPACE] to jump", win)
+    win.refresh
 
     # start on spacebar press
     input_wait(" ")
@@ -141,8 +149,8 @@ def game_start(settings, win, leaderboard)
         end
         x_offset += 1
 
-        draw_pipes(s, pipes, x_offset, screen)
-        draw_score(screen, score_y_pos, score_x_pos, score)
+        draw_pipes(s, pipes, x_offset, screen, win)
+        draw_score(screen, score_y_pos, score_x_pos, score, win)
 
         
         
@@ -151,9 +159,9 @@ def game_start(settings, win, leaderboard)
 
             # show user where they crashed
             game_running = false
-            draw_bird(bird, screen, s[:SAD_BIRD])
+            draw_bird(bird, screen, s[:SAD_BIRD], win)
             # make bird red
-            render(screen, win)
+            win.refresh
             sleep(s[:END_DELAY])
 
             # show final score
@@ -163,8 +171,8 @@ def game_start(settings, win, leaderboard)
             game_start(SETTINGS, win)
 
         else
-            draw_bird(bird, screen, s[:HAPPY_BIRD])
-            render(screen, win)
+            draw_bird(bird, screen, s[:HAPPY_BIRD], win)
+            win.refresh
             sleep(s[:SCROLL_SPEED])
         end
     end
