@@ -9,6 +9,7 @@ SETTINGS = {
     STARTER_PIPE_HEIGHT: 5,
     GRAVITY: 50,
     END_DELAY: 5,
+    SCORE_MARGIN: 2,
 
     #graphics
     PIPE_HEAD: "[|||||]",
