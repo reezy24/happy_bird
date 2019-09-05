@@ -15,9 +15,9 @@ noecho
 curs_set(0)
 start_color
 init_pair(1, COLOR_GREEN, COLOR_BLACK)
-init_pair(2, COLOR_YELLOW, COLOR_BLACK)
+init_pair(2, COLOR_BLACK, COLOR_YELLOW)
 init_pair(3, COLOR_WHITE, COLOR_BLACK)
-init_pair(4, COLOR_RED, COLOR_BLACK)
+init_pair(4, COLOR_BLACK, COLOR_RED)
 
 win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
 win.nodelay = true # set listening for user input to nonblocking
@@ -58,8 +58,8 @@ def draw_pipes(settings, pipes, pipe_offset, screen, win)
     end
 end
 
-def draw_bird(bird, screen, bird_graphic, win)
-    draw_to_screen(screen, bird.y_pos, bird.x_pos, bird_graphic, win, 2)
+def draw_bird(bird, screen, bird_graphic, win, pair = 2)
+    draw_to_screen(screen, bird.y_pos, bird.x_pos, bird_graphic, win, pair)
 end
 
 def draw_score(screen, y, x, score, win)
@@ -159,8 +159,7 @@ def game_start(settings, win, leaderboard)
 
             # show user where they crashed
             game_running = false
-            draw_bird(bird, screen, s[:SAD_BIRD], win)
-            # make bird red
+            draw_bird(bird, screen, s[:SAD_BIRD], win, 4) # make bird red
             win.refresh
             sleep(s[:END_DELAY])
 
