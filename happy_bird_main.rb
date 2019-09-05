@@ -6,17 +6,16 @@ require_relative "end_screen"
 require_relative "leaderboard"
 require "tty-reader"
 require "curses"
-require "colorize"
 
 include Curses
 
 # curses
 init_screen # prevent flicker
-Curses.start_color
+start_color
+init_pair(1, COLOR_GREEN, COLOR_BLACK)
+attrset(color_pair(1) | A_NORMAL)
 win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
 win.nodelay = true # set listening for user input to nonblocking
-Curses.init_pair(1, Curses::COLOR_RED, Curses::COLOR_BLUE)
-Curses.attrset(color_pair(1) | Curses::A_NORMAL)
 
 leaderboard = Leaderboard.new
 
@@ -88,7 +87,6 @@ def input_wait(input)
     input_wait(input) unless reader.read_char == input
 end
 
-
 def game_start(settings, win, leaderboard)
 
     s = settings
@@ -144,9 +142,10 @@ def game_start(settings, win, leaderboard)
         draw_pipes(s, pipes, x_offset, screen)
         draw_score(screen, score_y_pos, score_x_pos, score)
 
-        # check for collision (when replaced range is not " ")
-        hit = !read_from_screen(screen, bird.y_pos, range(bird.x_pos, s[:HAPPY_BIRD].length-1)).match(" ")
-        if hit # end game
+        
+        
+        # check for off-screen or collision (when replaced range is not " ")
+        if (bird.y_pos > s[:SCREEN_HEIGHT]) || !read_from_screen(screen, bird.y_pos, range(bird.x_pos, s[:HAPPY_BIRD].length-1)).match(" ")
 
             # show user where they crashed
             game_running = false
@@ -157,7 +156,7 @@ def game_start(settings, win, leaderboard)
 
             # show final score
             render(end_screen(score), win)
-            leaderboard.new_entry(gets.chomp.to_sym, score)
+            #leaderboard.new_entry(gets.chomp.to_sym, score)
             select_option(win, leaderboard)
             game_start(SETTINGS, win)
 
