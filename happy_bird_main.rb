@@ -8,6 +8,7 @@ require "tty-reader"
 require "curses"
 
 include Curses
+include Leaderboard
 
 def range(lower, upper)
     return lower..lower + upper
@@ -62,17 +63,18 @@ def select_option(win)
     when " "
         game_start(SETTINGS, win)
     when "l"
-        leaderboard
+        render(leaderboard_screen, win)
+        select_option(win)
     when "q"
         exit
     else
-        select_option
+        select_option(win)
     end
 end
 
 def input_wait(input)
     reader = TTY::Reader.new
-    input_wait unless reader.read_char == input
+    input_wait(input) unless reader.read_char == input
 end
 
 # curses
@@ -122,7 +124,7 @@ def game_start(settings, win)
 
         bird.jump if win.getch == " " # jump on space
         bird.move(s[:GRAVITY], s[:SCROLL_SPEED])
-        
+
         # adjust x_offset
         case x_offset
         when s[:DIST_BETWEEN_PIPES_X] # first pipe off-screen
@@ -132,7 +134,7 @@ def game_start(settings, win)
             score += 1
         end
         x_offset += 1
-        
+
         draw_pipes(s, pipes, x_offset, screen)
         draw_score(screen, score_y_pos, score_x_pos, score)
 
@@ -149,8 +151,9 @@ def game_start(settings, win)
 
             # show final score
             render(end_screen(score), win)
-            input_wait(" ")
-            game_start(SETTINGS, win)
+            add_leaderboard_entry(Leaderboard::leaderboard, gets.chomp, score)
+            select_option(win)
+            game_start(SETTINGS, win)  
 
         else
             draw_bird(bird, screen, s[:HAPPY_BIRD])
@@ -163,5 +166,3 @@ end
 render(main_menu, win)
 
 select_option(win)
-
-
