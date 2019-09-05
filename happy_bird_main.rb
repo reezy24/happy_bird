@@ -15,7 +15,10 @@ noecho
 curs_set(0)
 start_color
 init_pair(1, COLOR_GREEN, COLOR_BLACK)
-attrset(color_pair(1) | A_NORMAL)
+init_pair(2, COLOR_YELLOW, COLOR_BLACK)
+init_pair(3, COLOR_WHITE, COLOR_BLACK)
+init_pair(4, COLOR_RED, COLOR_BLACK)
+
 win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
 win.nodelay = true # set listening for user input to nonblocking
 
@@ -25,9 +28,10 @@ def range(lower, upper)
     return lower..lower + upper
 end
 
-def draw_to_screen(screen, y, x, str, win)
+def draw_to_screen(screen, y, x, str, win, pair = 3)
     screen[y] = "" if !screen[y] # create row
     screen[y][range(x, str.length-1)] = str
+    win.attrset(color_pair(pair) | A_NORMAL)
     win.setpos(y,x)
     win.addstr(str)
 end
@@ -50,12 +54,12 @@ def draw_pipes(settings, pipes, pipe_offset, screen, win)
                 this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
         end
-        draw_to_screen(screen, i, 0, this_row[viewport]+"\n", win)
+        draw_to_screen(screen, i, 0, this_row[viewport]+"\n", win, 1)
     end
 end
 
 def draw_bird(bird, screen, bird_graphic, win)
-    draw_to_screen(screen, bird.y_pos, bird.x_pos, bird_graphic, win)
+    draw_to_screen(screen, bird.y_pos, bird.x_pos, bird_graphic, win, 2)
 end
 
 def draw_score(screen, y, x, score, win)
