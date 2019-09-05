@@ -8,7 +8,14 @@ class Leaderboard
     }
   end
   def to_screen
-    return @board.sort_by {|k, v| -v}
+    screen = []
+    # sort the board in descending order and convert values to strings
+    @board.sort_by {|k, v| -v}.each do |entry|
+      name = entry[0].to_s
+      score = entry[1].to_s
+      screen.push("#{name}: #{score}\n")
+    end
+    return screen
   end
   def new_entry(name, score)
     @board[name] = score

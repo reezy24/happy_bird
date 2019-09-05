@@ -8,7 +8,14 @@ require "tty-reader"
 require "curses"
 
 include Curses
-include Leaderboard
+
+# curses
+init_screen # prevent flicker
+noecho # hide user input
+win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
+win.nodelay = true # set listening for user input to nonblocking
+
+leaderboard = Leaderboard.new
 
 def range(lower, upper)
     return lower..lower + upper
@@ -57,18 +64,18 @@ def render(screen, window)
     window.refresh
 end
 
-def select_option(win)
+def select_option(win, leaderboard)
     reader = TTY::Reader.new
     case reader.read_char
     when " "
-        game_start(SETTINGS, win)
+        game_start(SETTINGS, win, leaderboard)
     when "l"
-        render(leaderboard_screen, win)
-        select_option(win)
+        render(leaderboard.to_screen, win)
+        select_option(win, leaderboard)
     when "q"
         exit
     else
-        select_option(win)
+        select_option(win, leaderboard)
     end
 end
 
@@ -77,13 +84,8 @@ def input_wait(input)
     input_wait(input) unless reader.read_char == input
 end
 
-# curses
-init_screen # prevent flicker
-noecho # hide user input
-win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
-win.nodelay = true # set listening for user input to nonblocking
 
-def game_start(settings, win)
+def game_start(settings, win, leaderboard)
 
     s = settings
 
@@ -151,9 +153,9 @@ def game_start(settings, win)
 
             # show final score
             render(end_screen(score), win)
-            add_leaderboard_entry(Leaderboard::leaderboard, gets.chomp, score)
-            select_option(win)
-            game_start(SETTINGS, win)  
+            leaderboard.new_entry(gets.chomp.to_sym, score)
+            select_option(win, leaderboard)
+            game_start(SETTINGS, win)
 
         else
             draw_bird(bird, screen, s[:HAPPY_BIRD])
@@ -165,4 +167,4 @@ end
 
 render(main_menu, win)
 
-select_option(win)
+select_option(win, leaderboard)
