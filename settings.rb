@@ -2,6 +2,7 @@ SETTINGS = {
     
     #config
     SCREEN_HEIGHT: 20,
+    SCREEN_WIDTH: 50,
     DIST_BETWEEN_PIPES_X: 25,
     DIST_BETWEEN_PIPES_Y: 6,
     MIN_PIPE_HEIGHT: 2,

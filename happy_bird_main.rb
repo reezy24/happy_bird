@@ -1,6 +1,7 @@
 require_relative "happy_bird_pipes"
 require_relative "bird"
 require_relative "settings"
+require_relative "main_menu"
 require "tty-reader"
 require "curses"
 
@@ -53,14 +54,16 @@ def game_start(settings)
 
     s = settings
 
-    # curses stuff
+    # curses
     init_screen # prevent flicker
     noecho # hide user input
+
+    # tty-reader
+    reader = TTY::Reader.new # get input without pressing enter
 
     # game state vars
     game_running = false
     x_offset = 0
-    reader = TTY::Reader.new
     screen = []
     score = 0
 
@@ -86,7 +89,7 @@ def game_start(settings)
     win.nodelay = true # set listening for user input to nonblocking
     draw_to_screen(screen, s[:BIRD_START_Y] + 2, s[:BIRD_START_X], "[SPACE] to jump")
     render(screen, win)
-    
+
     # start on spacebar press
     until reader.read_char == " "
       game_running = false
@@ -131,6 +134,13 @@ def game_start(settings)
             sleep(s[:SCROLL_SPEED])
         end
     end
+end
+
+main_menu 
+
+reader = TTY::Reader.new
+until reader.read_char == " "
+    game_running = false
 end
 
 game_start(SETTINGS)
