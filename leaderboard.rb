@@ -1,7 +1,7 @@
 class Leaderboard
   attr_accessor :board
   def initialize
-    @board = {
+    @board = { # dummy data
         John: 1,
         Zach: 2,
         Mary: 3
@@ -9,5 +9,8 @@ class Leaderboard
   end
   def to_screen
     return @board.sort_by {|k, v| -v}
+  end
+  def new_entry(name, score)
+    @board[name] = score
   end
 end

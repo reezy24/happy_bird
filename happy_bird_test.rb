@@ -37,6 +37,13 @@ class HappyBirdTest < Test::Unit::TestCase
         [:Mary, 3],
         [:Zach, 2],
         [:John, 1]
-        ], @leaderboard.to_screen)
+      ], @leaderboard.to_screen)
+      @leaderboard.new_entry(:Jack, 4)
+      assert_equal({
+          John: 1,
+          Zach: 2,
+          Mary: 3,
+          Jack: 4,
+      }, @leaderboard.board)
     end
 end
