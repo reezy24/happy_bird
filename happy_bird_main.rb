@@ -4,7 +4,6 @@ require_relative "settings"
 require_relative "main_menu"
 require_relative "end_screen"
 require_relative "leaderboard"
-
 require "tty-reader"
 require "curses"
 
@@ -26,7 +25,7 @@ end
 
 def draw_pipes(settings, pipes, pipe_offset, screen)
     s = settings
-    range = pipe_offset..(s[:DIST_BETWEEN_PIPES_X] * (pipes.length - 1) + pipe_offset)
+    viewport = range(pipe_offset, s[:DIST_BETWEEN_PIPES_X] * (pipes.length - 1))
     s[:SCREEN_HEIGHT].times do |i| # each row
         this_row = ""
         pipes.each do |pipe|
@@ -38,7 +37,7 @@ def draw_pipes(settings, pipes, pipe_offset, screen)
                 this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
         end
-        draw_to_screen(screen, i, 0, this_row[range]+"\n")
+        draw_to_screen(screen, i, 0, this_row[viewport]+"\n")
     end
 end
 
@@ -70,6 +69,11 @@ def select_option
     else
         select_option
     end
+end
+
+def input_wait(input)
+    reader = TTY::Reader.new
+    input_wait unless reader.read_char == input
 end
 
 def game_start(settings)
@@ -112,9 +116,10 @@ def game_start(settings)
     render(screen, win)
 
     # start on spacebar press
-    until reader.read_char == " "
-      game_running = false
-    end
+    # until reader.read_char == " "
+    #   game_running = false
+    # end
+    input_wait(" ")
     game_running = true
     bird.jump
 
@@ -135,12 +140,11 @@ def game_start(settings)
         end
         x_offset += 1
         
-
         draw_pipes(s, pipes, x_offset, screen)
         draw_score(screen, score_y_pos, score_x_pos, score)
 
         # check for collision (when replaced range is not " ")
-        hit = !read_from_screen(screen, bird.y_pos, bird.x_pos..bird.x_pos+s[:HAPPY_BIRD].length-1).match(" ")
+        hit = !read_from_screen(screen, bird.y_pos, range(bird.x_pos, s[:HAPPY_BIRD].length-1)).match(" ")
         if hit # end game
             game_running = false
             draw_bird(bird, screen, s[:SAD_BIRD])
