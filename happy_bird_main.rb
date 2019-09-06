@@ -5,7 +5,6 @@ require_relative "main_menu"
 require_relative "end_screen"
 require_relative "leaderboard"
 require_relative "game_options"
-
 require "tty-reader"
 require "curses"
 
@@ -61,7 +60,6 @@ def draw_pipes(settings, pipes, pipe_offset, screen, win)
                 this_row += s[:PIPE_GAP].center(s[:DIST_BETWEEN_PIPES_X], " ")
             elsif i == pipe.top_height || i == pipe.bottom_head # pipe head
                 this_row += s[:PIPE_HEAD].center(s[:DIST_BETWEEN_PIPES_X], " ")
-            
             else # pipe body
                 this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
@@ -78,7 +76,9 @@ def draw_score(screen, y, x, score, win)
     draw_to_screen(screen, y, x, "SCORE: #{score}", win)
 end
 
-def render(screen, window)
+def render_game_screen(screen, window, options)
+    # render either main menu, end screen, or leaderboard
+    screen += options
     window.clear
     screen.each do |row|
         window.addstr(row)
@@ -92,7 +92,7 @@ def select_option(win, leaderboard, options)
     when " "
         game_start(SETTINGS, win, leaderboard, options)
     when "l"
-        render(leaderboard.to_screen + options, win)
+        render_game_screen(leaderboard.to_screen, win, options)
         select_option(win, leaderboard, options)
     when "q"
         exit
@@ -173,7 +173,7 @@ def game_start(settings, win, leaderboard, options)
             sleep(s[:END_DELAY])
 
             # show final score
-            render(end_screen(score), win)
+            render_game_screen(end_screen(score), win, options)
             leaderboard.new_entry(:YOU, score)
             select_option(win, leaderboard, options)
             game_start(SETTINGS, win)
@@ -188,6 +188,6 @@ def game_start(settings, win, leaderboard, options)
     end
 end
 
-render(main_menu + game_options, win)
+render_game_screen(main_menu, win, game_options)
 
 select_option(win, leaderboard, game_options)

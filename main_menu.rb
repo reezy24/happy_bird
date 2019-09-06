@@ -1,5 +1,3 @@
 def main_menu
-    return [
-    "Welcome to Happy Bird :)\n"
-    ]
+    return ["Welcome to Happy Bird :)\n"]
 end
