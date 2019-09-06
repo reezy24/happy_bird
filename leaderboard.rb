@@ -18,6 +18,9 @@ class Leaderboard
     return screen
   end
   def new_entry(name, score)
-    @board[name] = score
+    entry = @board[name]
+    if (entry and entry < score) or !entry
+      @board[name] = score
+    end
   end
 end

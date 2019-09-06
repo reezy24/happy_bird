@@ -157,7 +157,7 @@ def game_start(settings, win, leaderboard)
         
         
         # check for off-screen or collision (when replaced range is not " ")
-        if (bird.y_pos > s[:SCREEN_HEIGHT]) || !read_from_screen(screen, bird.y_pos, range(bird.x_pos, s[:HAPPY_BIRD].length-1)).match(" ")
+        if !read_from_screen(screen, bird.y_pos, range(bird.x_pos, s[:HAPPY_BIRD].length-1)).match(" ")
 
             # show user where they crashed
             game_running = false
