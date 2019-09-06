@@ -31,9 +31,10 @@ def range(lower, upper)
 end
 
 def draw_to_screen(screen, y, x, str, win, pair = 3)
-    screen[y] = "" if !screen[y] # create row
+    #screen array allows me to read what's being displayed later
+    screen[y] = "" if !screen[y] # create row if it doesn't exist
     screen[y][range(x, str.length-1)] = str
-    win.attrset(color_pair(pair) | A_NORMAL)
+    win.attrset(color_pair(pair) | A_NORMAL) # set text color
     win.setpos(y,x)
     win.addstr(str)
 end
@@ -48,14 +49,14 @@ def draw_pipes(settings, pipes, pipe_offset, screen, win)
     s[:SCREEN_HEIGHT].times do |i| # each row
         this_row = ""
         pipes.each do |pipe|
-            if i == s[:SCREEN_HEIGHT] - 1 # pipe ground
+            if i == s[:SCREEN_HEIGHT] - 1 # ground
                 this_row += s[:GROUND_FILL].center(s[:DIST_BETWEEN_PIPES_X], s[:GROUND_FILL][0])
-            elsif i == 0
+            elsif i == 0 # top of screen
                 this_row += s[:PIPE_TOP].center(s[:DIST_BETWEEN_PIPES_X], "_")
-            elsif i == s[:SCREEN_HEIGHT] - 2 # pipe ground
-                if pipe
+            elsif i == s[:SCREEN_HEIGHT] - 2 # top of ground
+                if pipe # draw bottom of pipe
                     this_row += s[:PIPE_GROUND].center(s[:DIST_BETWEEN_PIPES_X], "_")
-                else
+                else # draw top of ground
                     this_row += s[:PIPE_TOP].center(s[:DIST_BETWEEN_PIPES_X], "_")
                 end
             elsif !pipe || (i > pipe.top_height && i < pipe.bottom_head) # pipe gap
@@ -89,18 +90,18 @@ def render_game_screen(screen, window, options)
     window.refresh
 end
 
-def select_option(win, leaderboard, options)
+def prompt_option(win, leaderboard, options)
     reader = TTY::Reader.new
     case reader.read_char.downcase
     when " "
         game_start(SETTINGS, win, leaderboard, options)
     when "l"
         render_game_screen(leaderboard.to_screen, win, options)
-        select_option(win, leaderboard, options)
+        prompt_option(win, leaderboard, options)
     when "q"
         exit
     else
-        select_option(win, leaderboard, options)
+        prompt_option(win, leaderboard, options)
     end
 end
 
@@ -146,11 +147,6 @@ def game_start(settings, win, leaderboard, options)
 
     while game_running
 
-        screen = []
-
-        bird.jump if win.getch == " " # jump on space
-        bird.move(s[:GRAVITY], s[:SCROLL_SPEED])
-
         # adjust x_offset
         case x_offset
         when s[:DIST_BETWEEN_PIPES_X] # first pipe off-screen
@@ -160,12 +156,13 @@ def game_start(settings, win, leaderboard, options)
             score += 1
         end
         x_offset += 1
-
+        
+        # draw elements to screen
+        bird.jump if win.getch == " " # jump on space
+        bird.move(s[:GRAVITY], s[:SCROLL_SPEED])
         draw_pipes(s, pipes, x_offset, screen, win)
         draw_score(screen, score_y_pos, score_x_pos, score, win)
 
-        
-        
         # check for off-screen or collision (when replaced range is not " ")
         if !read_from_screen(screen, bird.y_pos, range(bird.x_pos, s[:HAPPY_BIRD].length-1)).match(" ")
 
@@ -178,13 +175,11 @@ def game_start(settings, win, leaderboard, options)
             # show final score
             render_game_screen(end_screen(score), win, options)
             leaderboard.new_entry(:YOU, score)
-            select_option(win, leaderboard, options)
+            prompt_option(win, leaderboard, options)
             game_start(SETTINGS, win)
 
         else
-            if bird.y_pos >=0
-                draw_bird(bird, screen, s[:HAPPY_BIRD], win)
-            end
+            draw_bird(bird, screen, s[:HAPPY_BIRD], win)
             win.refresh
             sleep(s[:SCROLL_SPEED])
         end
@@ -193,4 +188,4 @@ end
 
 render_game_screen(main_menu, win, game_options)
 
-select_option(win, leaderboard, game_options)
+prompt_option(win, leaderboard, game_options)
