@@ -19,6 +19,8 @@ init_pair(1, COLOR_GREEN, COLOR_BLACK)
 init_pair(2, COLOR_BLACK, COLOR_YELLOW)
 init_pair(3, COLOR_WHITE, COLOR_BLACK)
 init_pair(4, COLOR_BLACK, COLOR_RED)
+init_pair(5, COLOR_MAGENTA, COLOR_BLACK)
+
 win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
 win.nodelay = true # set listening for user input to nonblocking
 
@@ -78,8 +80,9 @@ end
 
 def render_game_screen(screen, window, options)
     # render either main menu, end screen, or leaderboard
-    screen += options
+    screen += options # append game options
     window.clear
+    window.attrset(color_pair(5) | A_NORMAL) # purple
     screen.each do |row|
         window.addstr(row)
     end
