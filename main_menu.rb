@@ -1,8 +1,5 @@
 def main_menu
     return [
-    "Welcome to Happy Bird :)\n",
-    "[SPACE] to start\n",
-    "[L]eaderboard\n",
-    "[Q]uit"
+    "Welcome to Happy Bird :)\n"
     ]
 end

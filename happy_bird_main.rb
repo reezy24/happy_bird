@@ -4,6 +4,8 @@ require_relative "settings"
 require_relative "main_menu"
 require_relative "end_screen"
 require_relative "leaderboard"
+require_relative "game_options"
+
 require "tty-reader"
 require "curses"
 
@@ -45,16 +47,21 @@ def draw_pipes(settings, pipes, pipe_offset, screen, win)
     s[:SCREEN_HEIGHT].times do |i| # each row
         this_row = ""
         pipes.each do |pipe|
-            if !pipe || (i > pipe.top_height && i < pipe.bottom_head) # pipe gap
+            if i == s[:SCREEN_HEIGHT] - 1 # pipe ground
+                this_row += s[:GROUND_FILL].center(s[:DIST_BETWEEN_PIPES_X], s[:GROUND_FILL][0])
+            elsif i == 0
+                this_row += s[:PIPE_TOP].center(s[:DIST_BETWEEN_PIPES_X], "_")
+            elsif i == s[:SCREEN_HEIGHT] - 2 # pipe ground
+                if pipe
+                    this_row += s[:PIPE_GROUND].center(s[:DIST_BETWEEN_PIPES_X], "_")
+                else
+                    this_row += s[:PIPE_TOP].center(s[:DIST_BETWEEN_PIPES_X], "_")
+                end
+            elsif !pipe || (i > pipe.top_height && i < pipe.bottom_head) # pipe gap
                 this_row += s[:PIPE_GAP].center(s[:DIST_BETWEEN_PIPES_X], " ")
             elsif i == pipe.top_height || i == pipe.bottom_head # pipe head
                 this_row += s[:PIPE_HEAD].center(s[:DIST_BETWEEN_PIPES_X], " ")
-            elsif i == s[:SCREEN_HEIGHT] - 2 # pipe ground
-                this_row += s[:PIPE_GROUND].center(s[:DIST_BETWEEN_PIPES_X], "_")
-            elsif i == s[:SCREEN_HEIGHT] - 1# pipe ground
-                this_row += s[:GROUND_FILL].center(s[:DIST_BETWEEN_PIPES_X], "/")
-            elsif i == 0
-                this_row += s[:PIPE_TOP].center(s[:DIST_BETWEEN_PIPES_X], "_")
+            
             else # pipe body
                 this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
@@ -79,20 +86,18 @@ def render(screen, window)
     window.refresh
 end
 
-def select_option(win, leaderboard)
+def select_option(win, leaderboard, options)
     reader = TTY::Reader.new
     case reader.read_char
     when " "
-        game_start(SETTINGS, win, leaderboard)
+        game_start(SETTINGS, win, leaderboard, options)
     when "l"
-        render(["LEADERBOARD\n"] + leaderboard.to_screen + ["[SPACE] to start\n",
-        "[L]eaderboard\n",
-        "[Q]uit"], win)
-        select_option(win, leaderboard)
+        render(leaderboard.to_screen + options, win)
+        select_option(win, leaderboard, options)
     when "q"
         exit
     else
-        select_option(win, leaderboard)
+        select_option(win, leaderboard, options)
     end
 end
 
@@ -101,7 +106,7 @@ def input_wait(input)
     input_wait(input) unless reader.read_char == input
 end
 
-def game_start(settings, win, leaderboard)
+def game_start(settings, win, leaderboard, options)
 
     s = settings
 
@@ -170,7 +175,7 @@ def game_start(settings, win, leaderboard)
             # show final score
             render(end_screen(score), win)
             leaderboard.new_entry(:YOU, score)
-            select_option(win, leaderboard)
+            select_option(win, leaderboard, options)
             game_start(SETTINGS, win)
 
         else
@@ -183,6 +188,6 @@ def game_start(settings, win, leaderboard)
     end
 end
 
-render(main_menu, win)
+render(main_menu + game_options, win)
 
-select_option(win, leaderboard)
+select_option(win, leaderboard, game_options)
