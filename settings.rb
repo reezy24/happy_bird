@@ -10,13 +10,13 @@ SETTINGS = {
     STARTER_PIPE_HEIGHT: 5,
     GRAVITY: 60,
     END_DELAY: 3,
-    SCORE_MARGIN: 2,
+    SCORE_MARGIN_X: 13,
+    SCORE_MARGIN_Y: 3,
 
     #graphics
     PIPE_HEAD: "[|||||]",
     PIPE_BODY: " ||||| ",
     PIPE_GAP:  "       ",
-    PIPE_GROUND: "_|||||_",
     PIPE_GROUND: "_|||||_",
     PIPE_TOP: "_______",
     GROUND_FILL: "*******",

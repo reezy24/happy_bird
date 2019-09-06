@@ -88,7 +88,7 @@ end
 
 def select_option(win, leaderboard, options)
     reader = TTY::Reader.new
-    case reader.read_char
+    case reader.read_char.downcase
     when " "
         game_start(SETTINGS, win, leaderboard, options)
     when "l"
@@ -128,8 +128,8 @@ def game_start(settings, win, leaderboard, options)
 
     # initialise score
     screen_width = screen[0].length # length of any value in screen array
-    score_x_pos = screen_width - s[:SCORE_MARGIN] - s[:PIPE_HEAD].length - 1
-    score_y_pos = s[:SCREEN_HEIGHT] - s[:SCORE_MARGIN]
+    score_x_pos = screen_width - s[:SCORE_MARGIN_X]
+    score_y_pos = s[:SCREEN_HEIGHT] - s[:SCORE_MARGIN_Y]
     draw_score(screen, score_y_pos, score_x_pos, score, win)
 
     # initialise screen
