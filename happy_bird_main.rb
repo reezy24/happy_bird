@@ -18,7 +18,6 @@ init_pair(1, COLOR_GREEN, COLOR_BLACK)
 init_pair(2, COLOR_BLACK, COLOR_YELLOW)
 init_pair(3, COLOR_WHITE, COLOR_BLACK)
 init_pair(4, COLOR_BLACK, COLOR_RED)
-
 win = Window.new(SETTINGS[:SCREEN_HEIGHT], 100, 0, 0)
 win.nodelay = true # set listening for user input to nonblocking
 
@@ -168,7 +167,7 @@ def game_start(settings, win, leaderboard)
 
             # show final score
             render(end_screen(score), win)
-            #leaderboard.new_entry(gets.chomp.to_sym, score)
+            leaderboard.new_entry(:YOU, score)
             select_option(win, leaderboard)
             game_start(SETTINGS, win)
 

@@ -2,9 +2,9 @@ class Leaderboard
   attr_accessor :board
   def initialize
     @board = { # dummy data
-        John: 1,
-        Zach: 2,
-        Mary: 3
+        REEZ: 999,
+        ELON: 99,
+        HAYLEY: 9
     }
   end
   def to_screen
