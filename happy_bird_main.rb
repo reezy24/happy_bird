@@ -53,6 +53,8 @@ def draw_pipes(settings, pipes, pipe_offset, screen, win)
                 this_row += s[:PIPE_GROUND].center(s[:DIST_BETWEEN_PIPES_X], "_")
             elsif i == s[:SCREEN_HEIGHT] - 1# pipe ground
                 this_row += s[:GROUND_FILL].center(s[:DIST_BETWEEN_PIPES_X], "/")
+            elsif i == 0
+                this_row += s[:PIPE_TOP].center(s[:DIST_BETWEEN_PIPES_X], "_")
             else # pipe body
                 this_row += s[:PIPE_BODY].center(s[:DIST_BETWEEN_PIPES_X], " ")
             end
@@ -172,7 +174,9 @@ def game_start(settings, win, leaderboard)
             game_start(SETTINGS, win)
 
         else
-            draw_bird(bird, screen, s[:HAPPY_BIRD], win)
+            if bird.y_pos >=0
+                draw_bird(bird, screen, s[:HAPPY_BIRD], win)
+            end
             win.refresh
             sleep(s[:SCROLL_SPEED])
         end
