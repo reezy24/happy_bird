@@ -1,7 +1,7 @@
 # Happy Bird :)
 
 # Statement of Purpose and Scope
-The purpose of this application is to replicate the game mechanics of the hit-game “Flappy Bird”. This application will aim to replicate the feel of Flappy bird but will only draw graphics using regular ASCII characters. 
+The purpose of this application is to replicate the game mechanics of the hit-game “Flappy Bird”, but in the terminal using Ruby. This application will aim to replicate the feel of Flappy Bird but will only draw graphics using regular ASCII characters. 
 
 In Flappy Bird, the player must guide a bird through a series of pipes of varying heights. The player loses when the bird hits a pipe or they fail to keep the bird above the bottom boundary of the screen. It is an “infinite runner” type of game, in the sense that there is no end but rather the player is rewarded when the game ends. 
 
