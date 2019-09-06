@@ -15,11 +15,6 @@ If we choose the example target audience of the Commuter, we know that they spen
 
 # Features
 
-Ensure that your features include the following language elements and concepts:
-- use of variables and the concept of variable scope (as in simply identifying what will be stored as variables? How to express scope?)
-- loops and conditional control structures
-- error handling
-
 ## Feature 1 – Gameplay
 The first feature is the simple gameplay mechanic of jumping. Jumping allows the player to avoid the pipes and stay alive. The variables would be the actual bird, the bird’s height, and the pipes. The game would loop 60 times a second to simulate 60 fps gameplay, which is the standard for most if not all modern titles across all platforms. We would use conditional control structures to check if the height of the bird is within the gap that the pipes create. If the bird does not clear the pipe, end the game.
 
@@ -39,12 +34,22 @@ Should the game encounter an error, this will be communicated to the player with
 
 # Control Flow Diagram
 
- insert diagram
+![flowchart](https://github.com/reezy24/happy_bird/blob/master/images/d1.png)
 
 # Implementation Plan
 
-word table and trello stuff
- 
-Sketches complete
- 
-Coding complete, on to documentation
+## Checklist
+
+![checklist one](https://github.com/reezy24/happy_bird/blob/master/images/d2.png)
+![checklist two](https://github.com/reezy24/happy_bird/blob/master/images/d3.png)
+
+## Trello progression
+
+Initial board:
+![trello one](https://github.com/reezy24/happy_bird/blob/master/images/d4.png)
+
+Sketches complete:
+![trello two](https://github.com/reezy24/happy_bird/blob/master/images/d5.png)
+
+Coding complete:
+![trello three](https://github.com/reezy24/happy_bird/blob/master/images/d6.png)
